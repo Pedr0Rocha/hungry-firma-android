@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "344484233276",
+    "firebase_url": "https://hungry-firma.firebaseio.com",
+    "project_id": "hungry-firma",
+    "storage_bucket": "hungry-firma.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344484233276:android:516b26727194d3c5",
+        "android_client_info": {
+          "package_name": "hungryfirma.pedrorocha.com.hungryfirma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344484233276-oge0984c7ss6j3trt0m4cb3rcbng77lq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hungryfirma.pedrorocha.com.hungryfirma",
+            "certificate_hash": "4bf7b8f5814b45518bc8ca3e2b2c005039e0dedf"
+          }
+        },
+        {
+          "client_id": "344484233276-s31ulobnbogk8dmp7qq43ok1r6gvsoev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbR5ywrRKIvXMRvpsb983YJwLwGWmX3bs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "344484233276-s31ulobnbogk8dmp7qq43ok1r6gvsoev.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

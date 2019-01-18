@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HungryFirma</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+    <string name="btn_add_venda">adicionar venda</string>
+
+</resources>
