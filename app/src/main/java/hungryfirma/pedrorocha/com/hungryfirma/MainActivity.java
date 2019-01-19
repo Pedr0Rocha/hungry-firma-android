@@ -30,7 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseReference mDatabase;
     DatabaseReference vendasReference;
-    DatabaseReference clientesReference;
+
+    EditText etComprador;
+    EditText etNomeItem;
+    EditText etPrecoCompraItem;
+    EditText etPrecoVendaItem;
+    EditText etQuando;
+
+    HashMap<String, ItemEstoque> itensEstoque = new HashMap<>();
 
 //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 //            = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -70,20 +77,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initInputs();
         initDatabase();
     }
 
-    private void initDatabase() {
+    private void initInputs() {
+        etComprador = findViewById(R.id.etComprador);
+        etNomeItem = findViewById(R.id.etNomeItem);
+        etPrecoCompraItem = findViewById(R.id.etPrecoCompraItem);
+        etPrecoVendaItem = findViewById(R.id.etPrecoVendaItem);
+        etQuando = findViewById(R.id.etQuando);
 
+        etNomeItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b) {
+                    autoCompletaDadosItem();
+                }
+            }
+        });
+    }
+
+    private void initDatabase() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         vendasReference = FirebaseDatabase.getInstance()
                 .getReference(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
                 .child(HungryFirmaConstants.FIREBASE.HOLDER_VENDAS);
-
-        clientesReference = FirebaseDatabase.getInstance()
-                .getReference(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
-                .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES);
 
         vendasReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -151,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 for (ItemEstoque itemEstoque : itensAtualizar.values()) {
+                    itensEstoque.put(itemEstoque.getNome(), itemEstoque);
+
                     mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
                             .child(HungryFirmaConstants.FIREBASE.HOLDER_ITENS)
                             .child(itemEstoque.getNome())
@@ -213,15 +235,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         * TODO
         * - auto completar campos de acordo com informacoes ja inseridas
-        *
         * */
-
-
-        EditText etComprador = findViewById(R.id.etComprador);
-        EditText etNomeItem = findViewById(R.id.etNomeItem);
-        EditText etPrecoCompraItem = findViewById(R.id.etPrecoCompraItem);
-        EditText etPrecoVendaItem = findViewById(R.id.etPrecoVendaItem);
-        EditText etQuando = findViewById(R.id.etQuando);
 
         Item item;
         try {
@@ -255,6 +269,22 @@ public class MainActivity extends AppCompatActivity {
         etPrecoVendaItem.setText("");
 
         return venda;
+    }
+
+    private void autoCompletaDadosItem() {
+        EditText etNomeItem = findViewById(R.id.etNomeItem);
+
+        String nomeItem = etNomeItem.getText().toString();
+
+        if (itensEstoque.containsKey(nomeItem)) {
+            EditText etPrecoCompraItem = findViewById(R.id.etPrecoCompraItem);
+            EditText etPrecoVendaItem = findViewById(R.id.etPrecoVendaItem);
+
+            ItemEstoque item = itensEstoque.get(nomeItem);
+
+            etPrecoCompraItem.setText(String.valueOf(item.getUltimoPrecoCompra()));
+            etPrecoVendaItem.setText(String.valueOf(item.getUltimoPrecoVenda()));
+        }
     }
 
 

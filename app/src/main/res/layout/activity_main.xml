@@ -15,7 +15,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusableInTouchMode="true">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,14 +38,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:hint="picpay da fera" />
+                    android:singleLine="true"
+                    android:hint="picpay da fera"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@+id/etNomeItem"/>
 
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Que item?"
+                    android:text="Qual item?"
                     android:textSize="18sp"
                     android:layout_marginTop="16dp"
                     android:labelFor="@+id/etNomeItem"/>
@@ -54,7 +59,10 @@
                     android:layout_height="wrap_content"
                     android:hint="nome do item"
                     android:gravity="center"
-                    android:inputType="textCapSentences"/>
+                    android:singleLine="true"
+                    android:inputType="textCapSentences"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@+id/etPrecoCompraItem"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -78,7 +86,12 @@
                             android:id="@+id/etPrecoCompraItem"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal"/>
+                            android:inputType="numberDecimal"
+                            android:gravity="center"
+                            android:hint="0.00"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/etPrecoVendaItem"
+                            android:nextFocusRight="@+id/etPrecoVendaItem"/>
 
                     </LinearLayout>
 
@@ -100,7 +113,11 @@
                             android:id="@+id/etPrecoVendaItem"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
+                            android:inputType="numberDecimal"
+                            android:gravity="center"
+                            android:hint="0.00"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/etQuando"/>
 
                     </LinearLayout>
 
@@ -119,7 +136,11 @@
                     android:id="@+id/etQuando"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="date"/>
+                    android:singleLine="true"
+                    android:inputType="date"
+                    android:hint="15/01/2019"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"/>
 
             </LinearLayout>
 
@@ -129,6 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
+                android:padding="20dp"
                 android:text="@string/btn_add_venda"/>
 
         </LinearLayout>
