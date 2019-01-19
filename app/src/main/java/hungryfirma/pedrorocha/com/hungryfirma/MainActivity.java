@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import hungryfirma.pedrorocha.com.hungryfirma.models.Cliente;
 import hungryfirma.pedrorocha.com.hungryfirma.models.Item;
+import hungryfirma.pedrorocha.com.hungryfirma.models.ItemEstoque;
 import hungryfirma.pedrorocha.com.hungryfirma.models.Venda;
 
 public class MainActivity extends AppCompatActivity {
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         clientesReference = FirebaseDatabase.getInstance()
                 .getReference(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
-                .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES.NOME);
+                .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES);
 
         vendasReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 double totalGasto = 0.0;
 
                 HashMap<String, Cliente> clientesAtualizar = new HashMap<>();
+                HashMap<String, ItemEstoque> itensAtualizar = new HashMap<>();
 
                 for (DataSnapshot diasVendas : dataSnapshot.getChildren()) {
 
@@ -123,14 +125,36 @@ public class MainActivity extends AppCompatActivity {
                             clientesAtualizar.put(cliente.getId(), cliente);
                         }
 
+
+                        /* Atualiza Itens */
+                        String nomeItem = venda.child("item").child("nome").getValue().toString();
+                        ItemEstoque item = new ItemEstoque(nomeItem);
+
+                        if (itensAtualizar.containsKey(item.getNome())) {
+                            ItemEstoque itemAtualizar = itensAtualizar.get(item.getNome());
+                            itensAtualizar.remove(item.getNome());
+
+                            itemAtualizar.processaVenda(valorCompra, valorVenda);
+                            itensAtualizar.put(itemAtualizar.getNome(), itemAtualizar);
+                        } else {
+                            item.processaVenda(valorCompra, valorVenda);
+                            itensAtualizar.put(item.getNome(), item);
+                        }
                     }
                 }
 
                 for (Cliente clienteAtualizar : clientesAtualizar.values()) {
                     mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
-                            .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES.NOME)
+                            .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES)
                             .child(clienteAtualizar.getId())
                             .setValue(clienteAtualizar);
+                }
+
+                for (ItemEstoque itemEstoque : itensAtualizar.values()) {
+                    mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
+                            .child(HungryFirmaConstants.FIREBASE.HOLDER_ITENS)
+                            .child(itemEstoque.getNome())
+                            .setValue(itemEstoque);
                 }
 
                 double mediaPorVenda = 0;

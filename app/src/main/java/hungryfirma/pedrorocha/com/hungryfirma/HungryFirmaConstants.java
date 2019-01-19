@@ -6,13 +6,8 @@ public class HungryFirmaConstants {
 
         public static String HOLDER_MAIN = "data";
         public static String HOLDER_VENDAS = "vendas";
-
-        public static class HOLDER_CLIENTES {
-            public static String NOME = "clientes";
-
-            public static String TOTAL_COMPRAS = "totalCompras";
-            public static String TOTAL_GASTO = "totalGasto";
-        }
+        public static String HOLDER_CLIENTES = "clientes";
+        public static String HOLDER_ITENS = "itens";
 
         public static class HOLDER_ESTATISTICAS {
             public static String NOME = "estatisticas";
