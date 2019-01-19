@@ -11,15 +11,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.HashMap;
 
 import hungryfirma.pedrorocha.com.hungryfirma.models.Cliente;
 import hungryfirma.pedrorocha.com.hungryfirma.models.Item;
@@ -89,24 +87,61 @@ public class MainActivity extends AppCompatActivity {
         vendasReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+
                 int totalVendas = 0;
                 double valorTotal = 0.0;
                 double totalGasto = 0.0;
 
-                for (DataSnapshot diasVendas : dataSnapshot.getChildren()) {
-                    totalVendas += diasVendas.getChildrenCount();
-                    for (DataSnapshot venda : diasVendas.getChildren()) {
-                        valorTotal += Double.parseDouble(venda.child("valor").getValue().toString());
-                        totalGasto += Double.parseDouble(venda.child("item").child("valorCompra").getValue().toString());
+                HashMap<String, Cliente> clientesAtualizar = new HashMap<>();
 
-                        /*
-                        * TODO - Atualizar os clientes usando o id salvo na venda
-                        * */
+                for (DataSnapshot diasVendas : dataSnapshot.getChildren()) {
+
+                    totalVendas += diasVendas.getChildrenCount();
+
+                    for (DataSnapshot venda : diasVendas.getChildren()) {
+
+                        double valorVenda = Double.parseDouble(venda.child("valor").getValue().toString());
+                        double valorCompra = Double.parseDouble(venda.child("item").child("valorCompra").getValue().toString());
+                        valorTotal += valorVenda;
+                        totalGasto += valorCompra;
+
+                        /* Atualiza Clientes */
+                        String picPayId = venda.child("picPayId").getValue().toString();
+                        Cliente cliente = new Cliente(picPayId);
+
+                        if (clientesAtualizar.containsKey(cliente.getId())) {
+                            Cliente clienteAtualizar = clientesAtualizar.get(cliente.getId());
+                            clientesAtualizar.remove(cliente.getId());
+
+                            clienteAtualizar.acumulaTotalCompras();
+                            clienteAtualizar.acumulaTotalGasto(valorVenda);
+                            clientesAtualizar.put(cliente.getId(), clienteAtualizar);
+                        } else {
+                            cliente.setTotalCompras(1);
+                            cliente.setTotalGasto(valorVenda);
+                            clientesAtualizar.put(cliente.getId(), cliente);
+                        }
+
                     }
                 }
 
-                double mediaPorVenda = valorTotal / totalVendas;
-                double mediaPorDia = valorTotal / dataSnapshot.getChildrenCount();
+                for (Cliente clienteAtualizar : clientesAtualizar.values()) {
+                    mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
+                            .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES.NOME)
+                            .child(clienteAtualizar.getId())
+                            .setValue(clienteAtualizar);
+                }
+
+                double mediaPorVenda = 0;
+                if (totalVendas > 0) {
+                    mediaPorVenda = valorTotal / totalVendas;
+                }
+
+                double mediaPorDia = 0;
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    mediaPorDia = valorTotal / dataSnapshot.getChildrenCount();
+                }
 
                 mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.NOME)
                         .child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.TOTAL_VENDAS)
@@ -127,22 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.NOME)
                         .child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.MEDIA_POR_DIA)
                         .setValue(mediaPorDia);
-
-                /*TODO
-                *
-                * colocar nas estatisticas
-                * - entrada por comprador
-                *   - quantidade total comprada
-                *   - valor total comprado
-                *
-                * - entrada por item
-                *   - quantidade total vendida
-                *   - valor total
-                *
-                * - entrada por data
-                *   - valor total vendido
-                *
-                * */
             }
 
             @Override
@@ -156,18 +175,6 @@ public class MainActivity extends AppCompatActivity {
         Venda venda = getVendaFromInput();
 
         if (venda != null) {
-
-            Cliente cliente = new Cliente(venda.getPicPayId());
-            cliente.setTotalGasto(venda.getValor());
-
-            /*
-            * TODO - checar se ja existe antes de criar
-            * */
-            mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
-                    .child(HungryFirmaConstants.FIREBASE.HOLDER_CLIENTES.NOME)
-                    .child(cliente.getId())
-                    .setValue(cliente);
-
             mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_MAIN)
                     .child(HungryFirmaConstants.FIREBASE.HOLDER_VENDAS)
                     .child(venda.getData().replace('/', '-'))

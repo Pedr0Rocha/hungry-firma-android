@@ -37,11 +37,19 @@ public class Cliente {
         this.totalCompras = totalCompras;
     }
 
+    public void acumulaTotalCompras() {
+        this.totalCompras++;
+    }
+
     public double getTotalGasto() {
         return totalGasto;
     }
 
     public void setTotalGasto(double totalGasto) {
         this.totalGasto = totalGasto;
+    }
+
+    public void acumulaTotalGasto(double gasto) {
+        this.totalGasto += gasto;
     }
 }
