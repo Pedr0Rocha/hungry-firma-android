@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseReference mDatabase;
     DatabaseReference vendasReference;
+    DatabaseReference mercadosReference;
 
     EditText etComprador;
     EditText etNomeItem;
@@ -39,25 +40,22 @@ public class MainActivity extends AppCompatActivity {
 
     HashMap<String, ItemEstoque> itensEstoque = new HashMap<>();
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.title_home);
-//                    return true;
-//                case R.id.navigation_dashboard:
-//                    mTextMessage.setText(R.string.title_dashboard);
-//                    return true;
-//                case R.id.navigation_notifications:
-//                    mTextMessage.setText(R.string.title_notifications);
-//                    return true;
-//            }
-//            return false;
-//        }
-//    };
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    return true;
+                case R.id.navigation_mercado:
+                    return true;
+                case R.id.navigation_notifications:
+                    return true;
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         Button btnAddCompra = findViewById(R.id.btnAddVenda);
 
@@ -108,8 +106,6 @@ public class MainActivity extends AppCompatActivity {
         vendasReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-
                 int totalVendas = 0;
                 double valorTotal = 0.0;
                 double totalGasto = 0.0;
@@ -208,6 +204,28 @@ public class MainActivity extends AppCompatActivity {
                 mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.NOME)
                         .child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.MEDIA_POR_DIA)
                         .setValue(mediaPorDia);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mercadosReference = FirebaseDatabase.getInstance()
+                .getReference(HungryFirmaConstants.FIREBASE.HOLDER_MERCADOS);
+
+        mercadosReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                double totalMercado = 0;
+                for (DataSnapshot mercado : dataSnapshot.getChildren()) {
+                    totalMercado += Double.parseDouble(mercado.getValue().toString());
+                }
+
+                mDatabase.child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.NOME)
+                        .child(HungryFirmaConstants.FIREBASE.HOLDER_ESTATISTICAS.TOTAL_GASTO_MERCADO)
+                        .setValue(totalMercado);
             }
 
             @Override

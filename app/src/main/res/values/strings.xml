@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">HungryFirma</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Vendas</string>
+    <string name="title_mercado">Mercado</string>
+    <string name="title_estatisticas">Estatísticas</string>
 
 
     <string name="btn_add_venda">adicionar venda</string>
